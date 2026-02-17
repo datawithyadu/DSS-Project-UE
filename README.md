@@ -1,270 +1,196 @@
-🔥 WILDFIRE PREDICTION USING SATELLITE IMAGERY & MACHINE LEARNING
-===============================================================
+🏠 House Price Prediction using Random Forest & XGBoost
+📌 Project Overview
 
-This project implements an end-to-end wildfire prediction system using
-MODIS satellite data, Google Earth Engine (GEE), and Machine Learning.
-The system predicts wildfire occurrence at pixel level and evaluates
-performance using both statistical metrics and spatial error analysis.
+This project develops a supervised machine learning regression model to predict residential house prices using the Ames Housing dataset.
 
----------------------------------------------------------------
-PROJECT OBJECTIVES
----------------------------------------------------------------
-- Extract vegetation indices (NDVI, EVI) from MODIS satellite data
-- Generate wildfire labels using MODIS Burned Area product
-- Train and compare ML models (Random Forest, XGBoost)
-- Predict wildfire occurrence for every pixel in the study area
-- Perform spatial validation using confusion matrix logic (TP, TN, FP, FN)
+Unlike a basic modeling approach, this project emphasizes:
 
----------------------------------------------------------------
-KEY CONCEPTS USED
----------------------------------------------------------------
-- Remote Sensing (MODIS)
-- Vegetation Indices (NDVI, EVI)
-- Google Earth Engine (Cloud-based geospatial processing)
-- Machine Learning
-- Confusion Matrix
-- Raster-based spatial validation
+Structured preprocessing pipeline
 
----------------------------------------------------------------
-PROJECT STRUCTURE
----------------------------------------------------------------
-wildfire-prediction/
-│
-├── main.py
-├── gee_processing.py
-├── ml_training.py
-├── raster_validation.py
-├── requirements.txt
-├── README.md
-└── outputs/
-    ├── WF_RF_PRED_BC_2023.tif
-    ├── WF_TRUE_BURN_BC_2023.tif
-    └── Error_Map_TP_TN_FP_FN.png
+Feature relevance analysis using Mutual Information
 
----------------------------------------------------------------
-SYSTEM REQUIREMENTS
----------------------------------------------------------------
-- Python 3.8 or higher
-- Internet connection
-- Google Earth Engine account (Personal / Academic)
+Cross-model feature importance comparison
 
----------------------------------------------------------------
-LIBRARIES & API INSTALLATION (DETAILED)
----------------------------------------------------------------
+Dimensionality reduction via zero-importance filtering
 
-The following libraries are installed and used in this project.
-Some libraries work locally on the system, while others act as APIs
-to connect with cloud-based services.
+Hyperparameter optimization using GridSearchCV
 
-INSTALLATION COMMAND:
-,,bash
-pip install numpy pandas matplotlib rasterio scikit-learn folium earthengine-api
-,,,
+Source Notebook: 
 
----------------------------------------------------------------
-1) GOOGLE EARTH ENGINE PYTHON API (earthengine-api)
----------------------------------------------------------------
+house_price_prediction_xg (6)
 
-TYPE:
-- Cloud API (installed locally as a Python library)
+📊 Dataset
 
-PURPOSE:
-- Connects Python code to Google Earth Engine servers
-- Accesses large satellite datasets (MODIS)
-- Performs geospatial processing in the cloud
+Dataset: Ames Housing (Kaggle Competition)
 
-WHY IT IS REQUIRED:
-- Satellite data is too large to process locally
-- GEE handles data storage, computation, and exports
+79 explanatory variables
 
-HOW IT IS USED:
-- Data extraction (NDVI, EVI)
-- Fire label generation
-- Training ML model inside Earth Engine
-- Exporting GeoTIFF outputs
+Target variable: SalePrice
 
-AUTHENTICATION METHOD:
-- Token-based authentication
-- Personal / Academic use (free)
+The dataset includes property attributes such as:
 
-IMPORTANT NOTE:
-- This API is free for personal and academic use
-- Commercial use requires billing
+Construction quality
 
----------------------------------------------------------------
-2) NUMPY
----------------------------------------------------------------
+Living area
 
-TYPE:
-- Local Python library
+Basement area
 
-PURPOSE:
-- Numerical computation
-- Array and matrix operations
+Garage capacity
 
-WHY IT IS REQUIRED:
-- Raster data is stored as arrays
-- Pixel-wise comparisons and calculations
+Neighborhood
 
-HOW IT IS USED:
-- Binary conversion of rasters (0/1)
-- Error map creation (TP, TN, FP, FN)
-- Metric calculations (accuracy, precision, recall)
+Sale conditions
 
----------------------------------------------------------------
-3) PANDAS
----------------------------------------------------------------
+🧠 Machine Learning Pipeline
+1️⃣ Data Preprocessing
 
-TYPE:
-- Local Python library
+Dropped ID column
 
-PURPOSE:
-- Tabular data handling
+Separated numerical & categorical features
 
-WHY IT IS REQUIRED:
-- Training data exported from Earth Engine is in CSV format
+Imputed:
 
-HOW IT IS USED:
-- Reading CSV datasets
-- Cleaning and preprocessing data
-- Preparing features and labels for ML models
+Numerical → Mean strategy
 
----------------------------------------------------------------
-4) SCIKIT-LEARN (sklearn)
----------------------------------------------------------------
+Categorical → Most frequent strategy
 
-TYPE:
-- Local Python Machine Learning library
+Applied OneHotEncoding via ColumnTransformer
 
-PURPOSE:
-- Machine learning model development
-- Model evaluation
+2️⃣ Feature Relevance Analysis
 
-WHY IT IS REQUIRED:
-- Train Random Forest and XGBoost models
-- Evaluate performance before spatial deployment
+To reduce noise and improve model efficiency:
 
-HOW IT IS USED:
-- Model training
-- Train-test split
-- Accuracy, precision, recall, F1-score, AUC
+Applied Mutual Information Regression
 
-IMPORTANT NOTE:
-- Models trained here are used only for evaluation
-- They cannot be directly used inside Earth Engine
+Extracted:
 
----------------------------------------------------------------
-5) MATPLOTLIB
----------------------------------------------------------------
+Random Forest feature importance
 
-TYPE:
-- Local Python visualization library
+XGBoost feature importance
 
-PURPOSE:
-- Plotting and visualization
+Removed:
 
-WHY IT IS REQUIRED:
-- Visual interpretation of results
+Features with XGBoost importance = 0
 
-HOW IT IS USED:
-- Display predicted and true wildfire maps
-- Visualize error maps (TP, TN, FP, FN)
-- Save figures for reports and documentation
+Features with RF importance = 0
 
----------------------------------------------------------------
-6) RASTERIO
----------------------------------------------------------------
+Combined redundant feature lists
 
-TYPE:
-- Local Python geospatial library
+This reduced dimensionality while maintaining predictive power.
 
-PURPOSE:
-- Read and write raster (GeoTIFF) files
+3️⃣ Model Comparison
+🔹 Random Forest Regressor
 
-WHY IT IS REQUIRED:
-- Output maps from Earth Engine are GeoTIFFs
-- Raster-level validation is needed
+n_estimators = 200
 
-HOW IT IS USED:
-- Reading predicted wildfire rasters
-- Reading ground truth rasters
-- Pixel-wise raster comparison
+RMSE ≈ 33,107
 
----------------------------------------------------------------
-7) FOLIUM
----------------------------------------------------------------
+🔹 XGBoost (Initial)
 
-TYPE:
-- Local Python mapping library
+Default parameters
 
-PURPOSE:
-- Interactive map visualization
+Validation RMSE ≈ 32,003
 
-WHY IT IS REQUIRED:
-- Quick visualization of study area and spatial extent
+Training RMSE ≈ 1,400
+→ Identified overfitting
 
-HOW IT IS USED:
-- Display study area boundaries
-- Visual map inspection during analysis
+4️⃣ Feature Filtering & Retraining
 
----------------------------------------------------------------
-GOOGLE EARTH ENGINE AUTHENTICATION (DETAILED)
----------------------------------------------------------------
+After removing zero-contributing features:
 
-Google Earth Engine authentication for this project was completed using
-the interactive token-based authorization method.
+Random Forest RMSE ≈ 33,238
 
-The authentication link generated by the Earth Engine API was opened in
-a web browser. A Google account was selected, and the usage purpose was
-chosen as "Personal / Academic Use", which provides free access.
+XGBoost improved performance
 
-A new Earth Engine project was then registered by assigning a project
-name. After project creation, an authentication token was generated and
-pasted into the authentication text box provided by the API interface.
+5️⃣ Hyperparameter Tuning
 
-This token securely authorizes the local Python environment to access
-Google Earth Engine services. No billing or payment method is required.
+Used GridSearchCV:
 
----------------------------------------------------------------
-WORKFLOW OVERVIEW
----------------------------------------------------------------
+Parameters tuned:
 
-1) Study area definition using bounding box
-2) Feature extraction (NDVI, EVI) from MODIS
-3) Fire label generation using BurnDate
-4) Balanced dataset creation
-5) Model training and evaluation (Python)
-6) Model retraining inside Earth Engine
-7) Pixel-wise wildfire prediction
-8) Raster export (GeoTIFF)
-9) Spatial confusion matrix and metrics
+n_estimators
 
----------------------------------------------------------------
-OUTPUT FILES
----------------------------------------------------------------
-WF_RF_PRED_BC_2023.tif        → Predicted wildfire map
-WF_TRUE_BURN_BC_2023.tif     → Actual burned area (MODIS)
-Error_Map_TP_TN_FP_FN.png    → Spatial confusion matrix
+max_depth
 
----------------------------------------------------------------
-LIMITATIONS
----------------------------------------------------------------
-- Only vegetation indices are used
-- No weather or human activity data
-- MODIS resolution may miss small fires
+learning_rate
 
----------------------------------------------------------------
-LICENSE
----------------------------------------------------------------
-This project is intended for educational and research purposes only.
+Cross-validation: 3-fold
+Scoring: Negative MSE
 
----------------------------------------------------------------
-FINAL NOTE
----------------------------------------------------------------
-This project clearly separates:
-- Cloud-based geospatial processing (Google Earth Engine API)
-- Local machine learning and validation (Python libraries)
+Final optimized model selected via best RMSE.
 
-This design enables scalable, explainable, and spatially validated
-wildfire prediction.
+📈 Final Performance
+
+Final optimized XGBoost model achieved:
+
+RMSE ≈ 27,839
+
+Improvement achieved through:
+
+Feature elimination
+
+Controlled model complexity
+
+Cross-validated tuning
+
+🏆 Key Technical Takeaways
+
+Feature selection via model-based importance can reduce dimensionality without degrading performance.
+
+XGBoost outperforms Random Forest for structured tabular regression tasks.
+
+Hyperparameter tuning significantly reduces overfitting.
+
+Proper preprocessing is critical in tabular ML pipelines.
+
+🛠 Tech Stack
+
+Python
+
+Pandas
+
+NumPy
+
+Matplotlib / Seaborn
+
+Scikit-learn
+
+XGBoost
+
+🔥 Now — Strategic LinkedIn Positioning
+
+You SHOULD:
+
+✅ Add under “Projects”
+✅ Create a LinkedIn post
+❌ Do NOT add as fake "Machine Learning Engineer Experience"
+
+You're still transitioning — authenticity builds stronger trust.
+
+🚀 LinkedIn Post Template (Authority Style)
+
+You can post something like this:
+
+📊 From Data to Decisions: Predicting House Prices with Machine Learning
+
+I recently built an end-to-end regression pipeline to predict residential house prices using the Ames Housing dataset.
+
+Instead of stopping at model training, I:
+
+• Performed feature relevance analysis using Mutual Information
+• Compared Random Forest and XGBoost
+• Eliminated zero-contributing features
+• Applied GridSearchCV for hyperparameter optimization
+• Reduced RMSE to 27,839
+
+This project strengthened my understanding of:
+
+✔ Model interpretability
+✔ Overfitting detection
+✔ Feature importance comparison
+✔ Performance optimization in structured datasets
+
+GitHub link: [your link]
+
+Excited to keep building in ML & AI 🚀
 
