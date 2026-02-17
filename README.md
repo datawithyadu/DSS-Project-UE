@@ -1,196 +1,131 @@
-🏠 House Price Prediction using Random Forest & XGBoost
-📌 Project Overview
+# 🏠 House Price Prediction using Random Forest & XGBoost
 
-This project develops a supervised machine learning regression model to predict residential house prices using the Ames Housing dataset.
+## 📌 Project Overview
+
+This project develops an end-to-end supervised machine learning regression model to predict residential house prices using the Ames Housing dataset (Kaggle Competition).
+
+The objective is to build a robust predictive model capable of estimating **SalePrice** based on 79 structured property features such as construction quality, living area, basement size, garage capacity, and neighborhood.
 
 Unlike a basic modeling approach, this project emphasizes:
 
-Structured preprocessing pipeline
+- Structured preprocessing pipeline  
+- Feature relevance analysis using Mutual Information  
+- Cross-model feature importance comparison  
+- Dimensionality reduction via zero-importance filtering  
+- Hyperparameter optimization using GridSearchCV  
 
-Feature relevance analysis using Mutual Information
+---
 
-Cross-model feature importance comparison
+## 📊 Dataset
 
-Dimensionality reduction via zero-importance filtering
+- Source: [Ames Housing Dataset - Kaggle](https://www.kaggle.com/competitions/home-data-for-ml-course/overview)
+- Target Variable: `SalePrice`
+- 79 explanatory variables
 
-Hyperparameter optimization using GridSearchCV
+---
 
-Source Notebook: 
+## 🔍 Machine Learning Pipeline
 
-house_price_prediction_xg (6)
+### 1️⃣ Data Preprocessing
+- Removed ID column
+- Separated numerical and categorical features
+- Missing value treatment:
+  - Numerical → Mean Imputation
+  - Categorical → Most Frequent Imputation
+- Applied OneHotEncoding using ColumnTransformer
+- Verified absence of null values
 
-📊 Dataset
+---
 
-Dataset: Ames Housing (Kaggle Competition)
+### 2️⃣ Feature Relevance Analysis
 
-79 explanatory variables
+- Applied **Mutual Information Regression**
+- Extracted feature importance from:
+  - Random Forest
+  - XGBoost
+- Removed zero-importance features
+- Reduced dimensionality without degrading performance
 
-Target variable: SalePrice
+---
 
-The dataset includes property attributes such as:
+### 3️⃣ Model Comparison
 
-Construction quality
+#### 🔹 Random Forest Regressor
+- n_estimators = 200
+- Validation RMSE ≈ 33,107
 
-Living area
+#### 🔹 XGBoost (Initial Model)
+- Default configuration
+- Validation RMSE ≈ 32,003
+- Training RMSE ≈ 1,400 (Overfitting observed)
 
-Basement area
+---
 
-Garage capacity
+### 4️⃣ Hyperparameter Tuning
 
-Neighborhood
-
-Sale conditions
-
-🧠 Machine Learning Pipeline
-1️⃣ Data Preprocessing
-
-Dropped ID column
-
-Separated numerical & categorical features
-
-Imputed:
-
-Numerical → Mean strategy
-
-Categorical → Most frequent strategy
-
-Applied OneHotEncoding via ColumnTransformer
-
-2️⃣ Feature Relevance Analysis
-
-To reduce noise and improve model efficiency:
-
-Applied Mutual Information Regression
-
-Extracted:
-
-Random Forest feature importance
-
-XGBoost feature importance
-
-Removed:
-
-Features with XGBoost importance = 0
-
-Features with RF importance = 0
-
-Combined redundant feature lists
-
-This reduced dimensionality while maintaining predictive power.
-
-3️⃣ Model Comparison
-🔹 Random Forest Regressor
-
-n_estimators = 200
-
-RMSE ≈ 33,107
-
-🔹 XGBoost (Initial)
-
-Default parameters
-
-Validation RMSE ≈ 32,003
-
-Training RMSE ≈ 1,400
-→ Identified overfitting
-
-4️⃣ Feature Filtering & Retraining
-
-After removing zero-contributing features:
-
-Random Forest RMSE ≈ 33,238
-
-XGBoost improved performance
-
-5️⃣ Hyperparameter Tuning
-
-Used GridSearchCV:
+Used **GridSearchCV (3-fold cross-validation)**
 
 Parameters tuned:
+- n_estimators
+- max_depth
+- learning_rate
 
-n_estimators
+Scoring metric:
+- Negative Mean Squared Error
 
-max_depth
+---
 
-learning_rate
+## 📈 Final Performance
 
-Cross-validation: 3-fold
-Scoring: Negative MSE
+Final Optimized XGBoost Model:
 
-Final optimized model selected via best RMSE.
+**RMSE ≈ 27,839**
 
-📈 Final Performance
+Performance improved through:
+- Feature elimination
+- Controlled model complexity
+- Cross-validated hyperparameter tuning
 
-Final optimized XGBoost model achieved:
+---
 
-RMSE ≈ 27,839
+## 🛠 Tech Stack
 
-Improvement achieved through:
+- Python  
+- Pandas  
+- NumPy  
+- Matplotlib  
+- Seaborn  
+- Scikit-learn  
+- XGBoost  
 
-Feature elimination
+---
 
-Controlled model complexity
+## 📂 Source Notebook
 
-Cross-validated tuning
+[Open Notebook](house_price_prediction_xg.ipynb)
 
-🏆 Key Technical Takeaways
+---
 
-Feature selection via model-based importance can reduce dimensionality without degrading performance.
+## 🚀 How to Run
 
-XGBoost outperforms Random Forest for structured tabular regression tasks.
+1. Clone the repository  
+   ```
+   git clone https://github.com/yourusername/your-repo-name.git
+   ```
 
-Hyperparameter tuning significantly reduces overfitting.
+2. Install dependencies  
+   ```
+   pip install -r requirements.txt
+   ```
 
-Proper preprocessing is critical in tabular ML pipelines.
+3. Run the notebook  
+   ```
+   jupyter notebook
+   ```
 
-🛠 Tech Stack
+---
 
-Python
+## 📌 Author
 
-Pandas
-
-NumPy
-
-Matplotlib / Seaborn
-
-Scikit-learn
-
-XGBoost
-
-🔥 Now — Strategic LinkedIn Positioning
-
-You SHOULD:
-
-✅ Add under “Projects”
-✅ Create a LinkedIn post
-❌ Do NOT add as fake "Machine Learning Engineer Experience"
-
-You're still transitioning — authenticity builds stronger trust.
-
-🚀 LinkedIn Post Template (Authority Style)
-
-You can post something like this:
-
-📊 From Data to Decisions: Predicting House Prices with Machine Learning
-
-I recently built an end-to-end regression pipeline to predict residential house prices using the Ames Housing dataset.
-
-Instead of stopping at model training, I:
-
-• Performed feature relevance analysis using Mutual Information
-• Compared Random Forest and XGBoost
-• Eliminated zero-contributing features
-• Applied GridSearchCV for hyperparameter optimization
-• Reduced RMSE to 27,839
-
-This project strengthened my understanding of:
-
-✔ Model interpretability
-✔ Overfitting detection
-✔ Feature importance comparison
-✔ Performance optimization in structured datasets
-
-GitHub link: [your link]
-
-Excited to keep building in ML & AI 🚀
-
+**Yadukrishnan**  
+Aspiring Data Scientist | Machine Learning & AI Enthusiast
